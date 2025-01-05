@@ -4,6 +4,8 @@ from tkinter import ttk, messagebox
 import ode_solver as solver
 import utils as utils
 
+#UI para probar mis modulos
+
 # Función para resolver la ecuación diferencial usando el método seleccionado
 global values_dict
 values_dict = {}
