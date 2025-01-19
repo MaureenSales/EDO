@@ -1,4 +1,3 @@
-import pandas as pd  # Ensure pandas is imported
 import tkinter as tk
 from tkinter import ttk, messagebox
 import ode_solver as solver
