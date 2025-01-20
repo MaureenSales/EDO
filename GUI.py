@@ -2,15 +2,19 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import *
-import pandas as pd  # Ensure pandas is imported
+import pandas as pd
+import pandastable as pt
+from pandastable import Table
 from tkinter import messagebox
 import ode_solver as solver
 import utils as utils
 
+root = tk.Tk()
 
-#Solve Method
 global values_dict
 values_dict = {}
+
+#Solve Method
 def solveEDO():
     try:
         funcValue = func.get()
@@ -68,7 +72,45 @@ def graphComparison():
         # Mostrar un mensaje de error si ocurre una excepción al graficar
         messagebox.showerror("Error", f"Hubo un error al graficar la comparación: {str(e)}")
 
-root = tk.Tk()
+
+# Method to convert pandas's results to DataFrame
+def convertToDataframe():
+    try:
+        if not values_dict:
+            raise ValueError("Primero debe resolver la ecuación")
+
+        dfs = []
+        methodNames = []
+        for methods, values in values_dict.items():
+            df = utils.Convert_to_DF(values, ["x", "y"])
+            dfs.append(df)
+            methodNames.append(methods)
+        if len(dfs) > 1:
+            df = utils.Combine_DataFrames(methodNames, dfs)
+        showDataframe(df)  # Mostrar el DataFrame en una nueva ventana
+    except Exception as e:
+        messagebox.showerror("Error", f"Hubo un error al convertir a DataFrame: {str(e)}")
+
+
+# Method to show DataFrame
+def showDataframe(df):
+    df_window = tk.Toplevel(root)
+    df_window.iconbitmap("edoi.ico") 
+    df_window.title("DataFrame") 
+
+    table = PandasApp(df_window, df)
+
+# Method to calculate numeric errors
+def calculateErrors():
+    try:
+        solveEDO()  # Arreglar metodo (calculo de sol ext)
+        for method, values in values_dict.items():
+            exact_solution = utils.Exact_Solution_R1(func.get(), values)
+            abs_error = utils.Get_Absolute_Error(exact_solution, values)
+            rel_error = utils.Get_Relative_Error(exact_solution, values)
+            messagebox.showinfo(f"Errores - {method}", f"Error Absoluto: {abs_error}\nError Relativo: {rel_error}")
+    except Exception as e:
+        messagebox.showerror("Error", f"Hubo un error al calcular los errores: {str(e)}")
 
 #ttk styling configuration
 
@@ -97,6 +139,25 @@ root.resizable(True, True)                                        #disable windo
 
 root.config(cursor="hand2", 
             bg = "#2d3250")                                         #window's design
+
+class PandasApp:
+    def __init__(self, master, df) -> None:
+        self.frame = tk.Frame(master)
+        self.frame.pack(padx = 30, pady = 30)
+
+        self.table = pt.Table(self.frame, dataframe=df, showstatusbar=True, showtoolbar= False)
+
+        self.table.fontsize = 12
+        self.table.textcolor = '#ffffff'
+
+        self.table.font = ('Comic Sans MS', 10)
+        self.table.rowselectedcolor = "sandy brown" 
+        self.table.cellbackgr = '#424769'
+
+        self.table.thefont = ('Comic Sans MS', 12, 'bold') 
+
+        self.table.show()
+
 
 
 #input frame
@@ -232,6 +293,7 @@ dataframeButton = tk.Button(inputFrame,
                         foreground='#2d3250', 
                         bg = "sandy brown", 
                         border=0,
+                        command=convertToDataframe
                         )
 dataframeButton.place(x = 30, y = 445)
 
@@ -243,6 +305,7 @@ numericErrors = tk.Button(inputFrame,
                         foreground='#2d3250', 
                         bg = "sandy brown", 
                         border=0,
+                        command= calculateErrors
                         )
 numericErrors.place(x = 30, y = 490)
 
