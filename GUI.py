@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import *
+from customtkinter import *
 import pandas as pd
 import pandastable as pt
-from pandastable import Table
+from pandastable import Table, config, TableModel
 from tkinter import messagebox
 import ode_solver as solver
 import utils as utils
@@ -154,9 +155,11 @@ class PandasApp:
         self.table.rowselectedcolor = "sandy brown" 
         self.table.cellbackgr = '#424769'
 
-        self.table.thefont = ('Comic Sans MS', 12, 'bold') 
+        self.table.thefont = ('Comic Sans MS', 12, 'bold')
+        
 
         self.table.show()
+        self.table.redraw()
 
 
 
