@@ -10,6 +10,7 @@ global values_dict
 values_dict = {}
 def resolver():
     try:
+        values_dict.clear()
         function = entry_function.get()
         x0 = float(entry_x0.get())
         y0 = float(entry_y0.get())
@@ -41,7 +42,7 @@ def resolver():
         resultado_var.set(resultado_text)
 
     except Exception as e:
-        messagebox.showerror("Error", f"Hubo un error: {str(e)}")
+        messagebox.showerror("Error", f"Hubo un error: {str(e.args)}")
 
 # Función para graficar las trazas de las aproximaciones
 def graficar_comparacion():

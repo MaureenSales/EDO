@@ -25,8 +25,10 @@ def euler_method(function_str, x_0, y_0, h, n):
     x, y, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols:
+        if y in function.free_symbols and x in function.free_symbols:
             An = function.subs({x: x_0, y: y_0})
+        elif y in function.free_symbols:
+            An = function.subs(y, y_0)
         else:
             An = function.subs(x, x_0)
         x_0 += h
@@ -55,14 +57,18 @@ def euler_improved_method(function_str, x_0, y_0, h, n):
     x, y, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols:
+        if y in function.free_symbols and x in function.free_symbols:
             An_0 = function.subs({x: x_0, y: y_0})
+        elif y in function.free_symbols:
+            An_0 = function.subs(y, y_0)
         else:
             An_0 = function.subs(x, x_0)
         x_0 += h
         y_1 = y_0 + h * An_0
-        if y in function.free_symbols:
+        if y in function.free_symbols and x in function.free_symbols:
             An_1 = ((An_0 + function.subs({x: x_0, y: y_1})) / 2)
+        elif y in function.free_symbols:
+            An_1 = ((An_0 + function.subs(y, y_1)) / 2)
         else:
             An_1 = ((An_0 + function.subs(x, x_0)) / 2)
         y_0 += h * An_1
@@ -87,11 +93,16 @@ def RK4(function_str, x_0, y_0, h, n):
     x, y, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols:
+        if y in function.free_symbols and x in function.free_symbols:
             k1 = function.subs({x: x_0, y: y_0})
             k2 = function.subs({x: x_0 + h/2, y: y_0 + (h/2)*k1})
             k3 = function.subs({x: x_0 + h/2, y: y_0 + (h/2)*k2})
             k4 = function.subs({x: x_0 + h, y: y_0 + h*k3})
+        elif y in function.free_symbols:
+            k1 = function.subs(y, y_0)
+            k2 = function.subs(y, y_0 + (h/2)*k1)
+            k3 = function.subs(y, y_0 + (h/2)*k2)
+            k4 = function.subs(y, y_0 + h*k3)
         else:
             k1 = function.subs(x, x_0)
             k2 = function.subs(x, x_0 + h/2)
