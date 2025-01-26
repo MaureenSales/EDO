@@ -9,6 +9,9 @@ from pandastable import Table, config, TableModel
 from tkinter import messagebox
 import ode_solver as solver
 import utils as utils
+import matplotlib.pyplot as plt
+import numpy as np
+import sympy as sp
 
 root = tk.Tk()
 
@@ -18,6 +21,7 @@ values_dict = {}
 #Solve Method
 def solveEDO():
     try:
+        values_dict.clear()
         funcValue = func.get()
         x0Value = float(x0.get())
         y0Value = float(y0.get())
@@ -311,15 +315,49 @@ numericErrors = tk.Button(inputFrame,
                         command= calculateErrors
                         )
 numericErrors.place(x = 30, y = 490)
-
+        
 #Isoclines
+def IsoclinesMethod(f,X0,Y0,n,h):
+    ImpEX=[]
+    ImpEY=[]
+    X,Y=sp.symbols('x,y')
+    spFunc = sp.sympify(f)
+    func = sp.lambdify([X,Y],spFunc,'numpy')
+    Tuples = solver.euler_improved_method(f,X0,Y0,h,n)
+    for i in Tuples:
+        ImpEX.append(i[0])
+        ImpEY.append(i[1])
+    x=np.linspace(-1*max(max(ImpEX),max(ImpEY)),max(max(ImpEX),max(ImpEY)),20)
+    y=np.linspace(-1*max(max(ImpEY),max(ImpEX)),max(max(ImpEY),max(ImpEX)),20)
+    X,Y=np.meshgrid(x,y)
+    u=1
+    v=func(X,Y)
+    U2,V2=u/np.sqrt(u**2+v**2),v/np.sqrt(u**2+v**2)
+    fig = plt.figure(figsize=(10,6))
+    plt.quiver(X,Y,U2,V2,color='blue')
+    plt.plot(ImpEX,ImpEY,label='Solution curve',color='red')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def IsoclinesFunctionality():
+    funcValue = func.get()
+    x0Value = float(x0.get())
+    y0Value = float(y0.get())
+    hValue = float(h.get())
+    nValue = int(n.get())
+    IsoclinesMethod(funcValue, x0Value, y0Value, nValue, hValue)
+
+
 isoclinesButton = tk.Button(inputFrame, 
                         text="Graficar campo direccional", 
                         font=('Comic Sans MS', 12), 
                         width= 26, 
                         foreground='#2d3250', 
                         bg = "sandy brown", 
-                        border=0 )
+                        border=0,
+                        command= IsoclinesFunctionality
+                        )
 isoclinesButton.place(x = 30, y = 535)
 
 
