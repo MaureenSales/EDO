@@ -1,8 +1,7 @@
-import numpy as np
-import sympy as sp
 #!/usr/bin/python3
 
 __name__ = "ode_solver"
+__author__= "Melissa Maureen Sales Brito"
 __copyright__= "Equipo 9"
 __version__= "1.0"
 __credits__= "Materia EDO 2do CC"
@@ -34,6 +33,9 @@ def euler_method(function_str, x_0, y_0, h, n):
         result.append((x_0, y_0))
     return result
 
+
+
+
 def euler_improved_method(function_str, x_0, y_0, h, n):
     """
     Implementa el Método de Euler Mejorado (Método de Heun) para resolver ecuaciones diferenciales ordinarias (EDOs).
@@ -58,7 +60,7 @@ def euler_improved_method(function_str, x_0, y_0, h, n):
         An_1 = (An_0 + function(x_0, y_1)) / 2
         y_0 += h * An_1
         result.append((x_0, y_0))
-        return result
+    return result
 
 
 def RK4(function_str, x_0, y_0, h, n):
@@ -86,4 +88,5 @@ def RK4(function_str, x_0, y_0, h, n):
         y_0 += (h/6)*(k1 + 2*k2 + 2*k3 + k4)
         result.append((x_0, y_0))
     return result
+
 
