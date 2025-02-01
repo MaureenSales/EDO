@@ -35,7 +35,6 @@ def Get_Trace(points, Name):
         xaxis_title='X',
         yaxis_title='Y',
     )
-    figure.write_html(f"{Name}.html")
     return (trace, figure)
 
 def Get_Comparison_Traces(traces):
@@ -43,7 +42,6 @@ def Get_Comparison_Traces(traces):
     for trace in traces:
         data.append(trace)
     figure = plt.Figure(data=data)
-    figure.write_html("Comparison.html")
     return figure
 
 def Exact_Solution_R1(function_str, values):
