@@ -8,6 +8,8 @@ __version__= "1.0"
 __credits__= "Materia EDO 2do CC"
 
 import utils as utils
+import sympy as sy
+
 
 def euler_method(function_str, x_0, y_0, h, n):
     """
@@ -23,15 +25,10 @@ def euler_method(function_str, x_0, y_0, h, n):
     Retorna:
     list: Una lista de tuplas, donde cada tupla representa los valores (x, y) en cada paso.
     """
-    x, y, function = utils.Convert_to_Symbols(function_str)
+    _, _, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols and x in function.free_symbols:
-            An = function.subs({x: x_0, y: y_0})
-        elif y in function.free_symbols:
-            An = function.subs(y, y_0)
-        else:
-            An = function.subs(x, x_0)
+        An = function(x_0,y_0)
         x_0 += h
         y_0 += h * An
         result.append((x_0, y_0))
@@ -55,20 +52,10 @@ def euler_improved_method(function_str, x_0, y_0, h, n):
     x, y, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols and x in function.free_symbols:
-            An_0 = function.subs({x: x_0, y: y_0})
-        elif y in function.free_symbols:
-            An_0 = function.subs(y, y_0)
-        else:
-            An_0 = function.subs(x, x_0)
+        An_0 = function(x_0, y_0)
         x_0 += h
         y_1 = y_0 + h * An_0
-        if y in function.free_symbols and x in function.free_symbols:
-            An_1 = ((An_0 + function.subs({x: x_0, y: y_1})) / 2)
-        elif y in function.free_symbols:
-            An_1 = ((An_0 + function.subs(y, y_1)) / 2)
-        else:
-            An_1 = ((An_0 + function.subs(x, x_0)) / 2)
+        An_1 = (An_0 + function(x_0, y_1)) / 2
         y_0 += h * An_1
         result.append((x_0, y_0))
         return result
@@ -91,16 +78,10 @@ def RK4(function_str, x_0, y_0, h, n):
     x, y, function = utils.Convert_to_Symbols(function_str)
     result = [(x_0, y_0)]
     for _ in range(n):
-        if y in function.free_symbols:
-            k1 = function.subs({x: x_0, y: y_0})
-            k2 = function.subs({x: x_0 + h/2, y: y_0 + (h/2)*k1})
-            k3 = function.subs({x: x_0 + h/2, y: y_0 + (h/2)*k2})
-            k4 = function.subs({x: x_0 + h, y: y_0 + h*k3})
-        else:
-            k1 = function.subs(x, x_0)
-            k2 = function.subs(x, x_0 + h/2)
-            k3 = function.subs(x, x_0 + h/2)
-            k4 = function.subs(x, x_0 + h)
+        k1 = function(x_0, y_0)
+        k2 = function(x_0 + h/2, y_0 + (h/2)*k1)
+        k3 = function(x_0 + h/2, y_0 + (h/2)*k2)
+        k4 = function(x_0 + h, y_0 + h*k3)
         x_0 += h
         y_0 += (h/6)*(k1 + 2*k2 + 2*k3 + k4)
         result.append((x_0, y_0))

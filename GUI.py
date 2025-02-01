@@ -211,7 +211,7 @@ h = StringVar()
 n = StringVar()
 
 
-funcLabel = ttk.Label(inputFrame, text="Introduce los datos a continuacion:"). place(x = 30, y = 1)
+funcLabel = ttk.Label(inputFrame, text="Introduce los datos a continuacion:").place(x = 30, y = 1)
 
 #function y'
 funcLabel = ttk.Label(inputFrame, 
