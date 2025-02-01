@@ -48,9 +48,11 @@ def euler_improved_method(f,x0,y0,h,iterations):
     while iterations!=0:
         An=func(X,Y)
         X=X+h
-        y1=Y
+        y1=An*h+Y
+        k=Y
+        Y=y1
         Bn=func(X,Y)
-        Y=y1+h*(An+Bn)/2
+        Y=k+h*(An+Bn)/2
         iterations-=1
         result.append((X,Y))
     return result

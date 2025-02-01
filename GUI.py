@@ -12,6 +12,7 @@ import utils as utils
 import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
+import math
 
 root = tk.Tk()
 
@@ -108,12 +109,40 @@ def showDataframe(df):
 # Method to calculate numeric errors
 def calculateErrors():
     try:
-        solveEDO()  # Arreglar metodo (calculo de sol ext)
-        for method, values in values_dict.items():
-            exact_solution = utils.Exact_Solution_R1(func.get(), values)
-            abs_error = utils.Get_Absolute_Error(exact_solution, values)
-            rel_error = utils.Get_Relative_Error(exact_solution, values)
-            messagebox.showinfo(f"Errores - {method}", f"Error Absoluto: {abs_error}\nError Relativo: {rel_error}")
+        funcValue = func.get()
+        x0Value = float(x0.get())
+        y0Value = float(y0.get())
+        hValue = float(h.get())
+        nValue = int(n.get())
+        rk4Results = solver.RK4(funcValue, x0Value, y0Value, hValue, nValue)
+
+        listAbs = []
+        listRelative = []
+        listTags = []
+        tagsAbs = []
+        tagsRelative = []
+
+        for method in values_dict:
+            if method != "RK4":
+                yExact = [y[1] for y in rk4Results]
+                yCurrentMethod = [y[1] for y in values_dict[method]]
+                listTags.append(method)
+                listAbs.append(utils.Get_Absolute_Error(yExact, yCurrentMethod))
+                listRelative.append(utils.Get_Relative_Error(yExact, yCurrentMethod))
+                if method == "Euler":
+                    tagsRelative.append("Relative Error Euler")
+                    tagsAbs.append("Absolute Error Euler")
+                if method == "Euler Mejorado":
+                    tagsAbs.append("Absolute Error Improved Euler")
+                    tagsRelative.append("Relative Error Improved Euler")
+
+        listAbs = list(zip(*listAbs))
+        listRelative = list(zip(*listRelative))
+        dfs = [utils.Convert_to_DF(listAbs, tagsAbs)]
+        dfs.append(utils.Convert_to_DF(listRelative, tagsRelative))
+        df = utils.Combine_DataFrames(listTags, dfs)
+        showDataframe(df)
+
     except Exception as e:
         messagebox.showerror("Error", f"Hubo un error al calcular los errores: {str(e)}")
 
@@ -327,8 +356,9 @@ def IsoclinesMethod(f,X0,Y0,n,h):
     for i in Tuples:
         ImpEX.append(i[0])
         ImpEY.append(i[1])
-    x=np.linspace(-1*max(max(ImpEX),max(ImpEY)),max(max(ImpEX),max(ImpEY)),20)
-    y=np.linspace(-1*max(max(ImpEY),max(ImpEX)),max(max(ImpEY),max(ImpEX)),20)
+    limit = max(max(ImpEX),max(ImpEY),abs(min(ImpEX)),abs(min(ImpEY)))  
+    x=np.linspace(-1*limit,limit,20)
+    y=np.linspace(-1*limit,limit,20)
     X,Y=np.meshgrid(x,y)
     u=1
     v=func(X,Y)
