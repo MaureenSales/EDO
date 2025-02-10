@@ -58,7 +58,7 @@ def euler_improved_method(function_str, x_0, y_0, h, n):
         An_1 = (An_0 + function(x_0, y_1)) / 2
         y_0 += h * An_1
         result.append((x_0, y_0))
-        return result
+    return result
 
 
 def RK4(function_str, x_0, y_0, h, n):
