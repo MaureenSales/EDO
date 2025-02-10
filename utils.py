@@ -22,6 +22,7 @@ def Combine_DataFrames(tags, dfs):
 def Convert_to_Symbols(function_string):
     x, y = sy.symbols('x, y')
     function = sy.sympify(function_string)
+    function = sy.lambdify([x,y], function, "numpy")
     return x, y, function
 
 def Get_Trace(points, Name):
