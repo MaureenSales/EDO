@@ -103,8 +103,11 @@ def showDataframe(df):
     df_window = tk.Toplevel(root)
     df_window.iconbitmap("edoi.ico") 
     df_window.title("DataFrame") 
+    df_window.config(cursor="hand2", 
+            bg = "#2d3250")
 
     table = PandasApp(df_window, df)
+    
 
 # Method to calculate numeric errors
 def calculateErrors():
@@ -116,30 +119,34 @@ def calculateErrors():
         nValue = int(n.get())
         rk4Results = solver.RK4(funcValue, x0Value, y0Value, hValue, nValue)
 
-        listAbs = []
-        listRelative = []
+        listEuler = []
+        listTagsEuler = []
+        listImproved = []
+        listTagsImproved = []
         listTags = []
-        tagsAbs = []
-        tagsRelative = []
-
         for method in values_dict:
             if method != "RK4":
                 yExact = [y[1] for y in rk4Results]
                 yCurrentMethod = [y[1] for y in values_dict[method]]
                 listTags.append(method)
-                listAbs.append(utils.Get_Absolute_Error(yExact, yCurrentMethod))
-                listRelative.append(utils.Get_Relative_Error(yExact, yCurrentMethod))
+                
                 if method == "Euler":
-                    tagsRelative.append("Relative Error Euler")
-                    tagsAbs.append("Absolute Error Euler")
+                    listEuler.append(utils.Get_Absolute_Error(yExact, yCurrentMethod))
+                    listEuler.append(utils.Get_Relative_Error(yExact, yCurrentMethod))
+                    listTagsEuler.append("Absolute")
+                    listTagsEuler.append("Relative")
                 if method == "Euler Mejorado":
-                    tagsAbs.append("Absolute Error Improved Euler")
-                    tagsRelative.append("Relative Error Improved Euler")
+                    listImproved.append(utils.Get_Absolute_Error(yExact, yCurrentMethod))
+                    listImproved.append(utils.Get_Relative_Error(yExact, yCurrentMethod))
+                    listTagsImproved.append("Absolute")
+                    listTagsImproved.append("Relative")
 
-        listAbs = list(zip(*listAbs))
-        listRelative = list(zip(*listRelative))
-        dfs = [utils.Convert_to_DF(listAbs, tagsAbs)]
-        dfs.append(utils.Convert_to_DF(listRelative, tagsRelative))
+        
+
+        listEuler = list(zip(*listEuler))
+        listImproved = list(zip(*listImproved))
+        dfs = [utils.Convert_to_DF(listEuler, listTagsEuler)]
+        dfs.append(utils.Convert_to_DF(listImproved, listTagsImproved))
         df = utils.Combine_DataFrames(listTags, dfs)
         showDataframe(df)
 
